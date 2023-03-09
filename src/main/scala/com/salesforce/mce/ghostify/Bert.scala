@@ -11,6 +11,7 @@ object Bert {
     .appName("spark-nlp-starter")
     .master("local[*]")
     .getOrCreate
+
   def main(args: Array[String]): Unit = {
 
     val document = new DocumentAssembler()
@@ -18,21 +19,23 @@ object Bert {
       .setOutputCol("document")
 
     val token = new Tokenizer()
-      .setInputCols("sentence")
+      .setInputCols("document")
       .setOutputCol("token")
 
-    val tokenClassifier = BertForTokenClassification.loadSavedModel("da", spark)
+    val modelPath = "/Users/donglin/Workspace/ghostify/utils/dslim/bert-base-NER/saved_model/1"
+
+    val tokenClassifier = BertForTokenClassification.loadSavedModel(modelPath, spark)
       .setInputCols("document", "token")
       .setOutputCol("ner")
-    .setCaseSensitive(true)
-    .setMaxSentenceLength(128)
+      .setCaseSensitive(true)
+      .setMaxSentenceLength(128)
 
     val pipeline = new Pipeline().setStages(
       Array(
         document,
         token,
         tokenClassifier
-        ))
+      ))
 
     val testData = spark
       .createDataFrame(
@@ -43,7 +46,7 @@ object Bert {
       .toDF("id", "text")
 
     val prediction = pipeline.fit(testData).transform(testData)
-    prediction.select("text","ner.result").show(false)
+    prediction.select("text", "ner.result").show(false)
 
   }
 
