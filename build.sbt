@@ -1,0 +1,49 @@
+lazy val scala212 = "2.12.12"
+lazy val scala213 = "2.13.6"
+lazy val supportedScalaVersions = List(scala212, scala213)
+
+val sparkVersion = "3.0.0"
+
+val scalaTestArtifact    = "org.scalatest"          %% "scalatest"                % "3.2.+" % Test
+val sparkCoreArtifact    = "org.apache.spark"       %% "spark-core"               % sparkVersion % Provided
+val sparkSqlArtifact     = "org.apache.spark"       %% "spark-sql"                % sparkVersion % Provided
+val sparkMlArtifact      = "org.apache.spark"       %% "spark-mllib"              % sparkVersion % Provided
+val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp"                % "4.3.1"
+// tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
+val collectionCompact = "org.scala-lang.modules"    %% "scala-collection-compat"  % "2.5.0"
+
+lazy val commonSettings = Seq(
+  scalaVersion := scala212,
+  crossScalaVersions := supportedScalaVersions,
+  libraryDependencies += scalaTestArtifact,
+  organization := "com.salesforce.mce",
+  assembly / test := {}  // skip test during assembly
+)
+
+assembly / test := {}
+assembly / assemblyMergeStrategy := {
+  // Work around the duplicated file case, really need to find out and fix the real conflict
+  // here, which are most likely brought in by the very lagged behind marketer and event
+  // dependencies
+  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case x if x.startsWith("NativeLibrary") => MergeStrategy.last
+  case x if x.startsWith("aws") => MergeStrategy.last
+  case x => MergeStrategy.last
+//    val oldStrategy = (assembly / assemblyMergeStrategy).value
+//    oldStrategy(x)
+}
+
+lazy val root = (project in file(".")).
+  enablePlugins(TestManagerPlugin).
+  settings(commonSettings: _*).
+  settings(
+    name := "ghostify",
+    libraryDependencies ++= Seq(
+      collectionCompact,
+      sparkCoreArtifact,
+      sparkSqlArtifact,
+      sparkMlArtifact,
+      scalaNlpArtifact,
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value
+    )
+  )
