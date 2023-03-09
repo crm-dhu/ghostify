@@ -1,5 +1,6 @@
 target/
 .idea
+utils/models/
 
 # Vim stuff
 *.swp
