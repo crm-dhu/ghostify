@@ -13,7 +13,7 @@ class AnonymizerSpec extends AnyWordSpec {
       Seq(
         "Google has announced the release of a beta version of the popular TensorFlow machine learning library",
         "The Paris metro will soon enter the 21st century, ditching single-use paper tickets for rechargeable electronic cards.",
-        "My name is Alex Wang and my email address is alex.wang@gmail.com.",
+        "My name is Alex Wang and my email address is alex.wang2009@gmail.com.",
         "Happy birthday, Alex!"
       )
     )
