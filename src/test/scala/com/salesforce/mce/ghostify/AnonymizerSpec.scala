@@ -18,7 +18,7 @@ class AnonymizerSpec extends AnyWordSpec {
       )
     )
 
-    "correctly process" in {
+    "correctly anonymize" in {
 
       val expected = Seq(
         "[ORG] has announced the release of a beta version of the popular [MISC] machine learning library",
@@ -27,7 +27,7 @@ class AnonymizerSpec extends AnyWordSpec {
         "Happy birthday, [PER]!"
       )
 
-      val results = Anonymizer.process(data)
+      val results = Anonymizer(data)
       val processed = results.collect()
       expected.zip(processed).foreach {case (e, p) => assert(e === p)}
 

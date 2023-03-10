@@ -11,7 +11,7 @@ object Anonymizer {
   private final val InputCol = "text"
   private final val OutputCol = "predictions"
 
-  def process(input: RDD[String])(implicit ss: SparkSession): RDD[String] = {
+  def apply(input: RDD[String])(implicit ss: SparkSession): RDD[String] = {
 
     import ss.implicits._
 
