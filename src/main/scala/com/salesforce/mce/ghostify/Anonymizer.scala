@@ -1,8 +1,8 @@
 package com.salesforce.mce.ghostify
 
-import com.johnsnowlabs.nlp.annotator.{BertForTokenClassification, NerConverter, SentenceDetector, Tokenizer}
+import com.johnsnowlabs.nlp.annotator._
 import com.johnsnowlabs.nlp.base.DocumentAssembler
-import org.apache.spark.ml.Pipeline
+import org.apache.spark.ml.{Pipeline, PipelineStage}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
@@ -11,42 +11,12 @@ object Anonymizer {
   private final val InputCol = "text"
   private final val OutputCol = "predictions"
 
-  def apply(input: RDD[String])(implicit ss: SparkSession): RDD[String] = {
+  def apply(input: RDD[String], useDefault: Boolean)(implicit ss: SparkSession): RDD[String] = {
 
     import ss.implicits._
 
-    val document = new DocumentAssembler()
-      .setInputCol(InputCol)
-      .setOutputCol("document")
 
-    val sentenceDetector = new SentenceDetector()
-      .setInputCols(document.getOutputCol)
-      .setOutputCol("sentence")
-
-    val token = new Tokenizer()
-      .setInputCols(document.getOutputCol)
-      .setOutputCol("token")
-
-    val tokenClassifier = BertForTokenClassification
-      .loadSavedModel(Params.ModelPath, ss)
-      .setInputCols(document.getOutputCol, token.getOutputCol)
-      .setOutputCol("ner")
-      .setCaseSensitive(true)
-      .setMaxSentenceLength(128)
-
-    val nerConverter = new NerConverter()
-      .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol, tokenClassifier.getOutputCol)
-      .setOutputCol(OutputCol)
-
-    val pipeline = new Pipeline().setStages(
-      Array(
-        document,
-        sentenceDetector,
-        token,
-        tokenClassifier,
-        nerConverter
-      )
-    )
+    val pipeline = new Pipeline().setStages(pipelineStages(useDefault))
 
     val data = input.toDF(InputCol)
 
@@ -71,6 +41,48 @@ object Anonymizer {
         .mkString("")
       Params.EmailRegex.replaceAllIn(neTagged, "[EMAIL]")
     }.rdd
+
+  }
+
+  private def pipelineStages(useDefault: Boolean)(implicit ss: SparkSession): Array[_ <: PipelineStage] = {
+
+    val document = new DocumentAssembler()
+      .setInputCol(InputCol)
+      .setOutputCol("document")
+
+    val sentenceDetector = new SentenceDetector()
+      .setInputCols(document.getOutputCol)
+      .setOutputCol("sentence")
+
+    val token = new Tokenizer()
+      .setInputCols(document.getOutputCol)
+      .setOutputCol("token")
+
+    lazy val wordEmbeddings = WordEmbeddingsModel
+      .pretrained()
+      .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol)
+      .setOutputCol("word_embeddings")
+
+    val ner = if (useDefault) {
+      NerDLModel
+        .pretrained("ner_dl", "en")
+        .setInputCols(token.getOutputCol, sentenceDetector.getOutputCol, wordEmbeddings.getOutputCol)
+        .setOutputCol("ner")
+    } else {
+      BertForTokenClassification
+        .loadSavedModel(Params.ModelPath, ss)
+        .setInputCols(document.getOutputCol, token.getOutputCol)
+        .setOutputCol("ner")
+        .setCaseSensitive(true)
+        .setMaxSentenceLength(128)
+    }
+
+    val nerConverter = new NerConverter()
+      .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol, ner.getOutputCol)
+      .setOutputCol(OutputCol)
+
+    if (useDefault) Array(document, sentenceDetector, token, wordEmbeddings, ner, nerConverter)
+    else Array(document, sentenceDetector, token, ner, nerConverter)
 
   }
 
