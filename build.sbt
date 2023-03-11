@@ -25,12 +25,16 @@ assembly / assemblyMergeStrategy := {
   // Work around the duplicated file case, really need to find out and fix the real conflict
   // here, which are most likely brought in by the very lagged behind marketer and event
   // dependencies
-  case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+  case PathList("META-INF", "io.netty.versions.properties") => MergeStrategy.first
+  case PathList("META-INF", "versions", "9", "module-info.class") => MergeStrategy.discard
+  case PathList("org.apache.hadoop", _@_*) => MergeStrategy.first
+  case PathList("com", "amazonaws", _@_*) => MergeStrategy.last
+  case PathList("org", "tensorflow", _@_*) => MergeStrategy.first
   case x if x.startsWith("NativeLibrary") => MergeStrategy.last
   case x if x.startsWith("aws") => MergeStrategy.last
-  case x => MergeStrategy.last
-//    val oldStrategy = (assembly / assemblyMergeStrategy).value
-//    oldStrategy(x)
+  case x =>
+    val oldStrategy = (assembly / assemblyMergeStrategy).value
+    oldStrategy(x)
 }
 
 lazy val root = (project in file(".")).
