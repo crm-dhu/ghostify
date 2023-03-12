@@ -38,10 +38,20 @@ assembly / assemblyMergeStrategy := {
 }
 
 lazy val root = (project in file(".")).
-  enablePlugins(TestManagerPlugin).
   settings(commonSettings: _*).
   settings(
     name := "ghostify",
+    libraryDependencies ++= Seq(
+      // Add your dependencies here
+    )
+  ).
+  aggregate(spark)
+
+lazy val spark = (project in file("ghostify-spark")).
+  enablePlugins(TestManagerPlugin).
+  settings(commonSettings: _*).
+  settings(
+    name := "ghostify-spark",
     libraryDependencies ++= Seq(
       collectionCompact,
       sparkCoreArtifact,

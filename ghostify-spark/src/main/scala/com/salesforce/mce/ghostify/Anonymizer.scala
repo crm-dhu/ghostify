@@ -5,7 +5,6 @@ import com.johnsnowlabs.nlp.base.DocumentAssembler
 import org.apache.spark.ml.{Pipeline, PipelineStage}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
-
 object Anonymizer {
 
   private final val InputCol = "text"
