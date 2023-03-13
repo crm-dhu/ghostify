@@ -2,7 +2,12 @@ lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.6"
 lazy val supportedScalaVersions = List(scala212, scala213)
 
+val djlVersion = "0.20.0"
 val sparkVersion = "3.0.0"
+
+val djlTensorflowEngine = "ai.djl.tensorflow" % "tensorflow-engine" % djlVersion
+val djlTensorflowModelZoo = "ai.djl.tensorflow" % "tensorflow-model-zoo" % djlVersion
+val protobuf = "com.google.protobuf" % "protobuf-java" % "3.20.1"
 
 val scalaTestArtifact    = "org.scalatest"          %% "scalatest"                % "3.2.+" % Test
 val sparkCoreArtifact    = "org.apache.spark"       %% "spark-core"               % sparkVersion % Provided
@@ -45,7 +50,21 @@ lazy val root = (project in file(".")).
       // Add your dependencies here
     )
   ).
-  aggregate(spark)
+  aggregate(djl, spark)
+
+lazy val djl = (project in file("ghostify-djl")).
+  enablePlugins(TestManagerPlugin).
+  settings(commonSettings: _*).
+  settings(
+    name := "ghostify-djl",
+    libraryDependencies ++= Seq(
+      collectionCompact,
+      djlTensorflowEngine,
+      djlTensorflowModelZoo,
+      protobuf,
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value
+    )
+  )
 
 lazy val spark = (project in file("ghostify-spark")).
   enablePlugins(TestManagerPlugin).
