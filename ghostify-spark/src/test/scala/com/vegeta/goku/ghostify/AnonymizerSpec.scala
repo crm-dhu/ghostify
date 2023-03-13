@@ -1,7 +1,8 @@
-package com.salesforce.mce.ghostify
+package com.vegeta.goku.ghostify
 
 import org.apache.spark.sql.SparkSession
 import org.scalatest.wordspec.AnyWordSpec
+
 class AnonymizerSpec extends AnyWordSpec {
 
   "Anonymizer" should {

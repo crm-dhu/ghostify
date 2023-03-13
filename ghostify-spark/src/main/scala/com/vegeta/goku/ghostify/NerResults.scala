@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify
+package com.vegeta.goku.ghostify
 
 case class NerResults(text: String, predictions: Seq[NerOutput])
 

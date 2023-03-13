@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify
+package com.vegeta.goku.ghostify
 
 import com.johnsnowlabs.nlp.annotator._
 import com.johnsnowlabs.nlp.base.DocumentAssembler

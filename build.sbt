@@ -21,7 +21,7 @@ lazy val commonSettings = Seq(
   scalaVersion := scala212,
   crossScalaVersions := supportedScalaVersions,
   libraryDependencies += scalaTestArtifact,
-  organization := "com.salesforce.mce",
+  organization := "com.vegeta.goku",
   assembly / test := {}  // skip test during assembly
 )
 
