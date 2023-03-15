@@ -1,7 +1,8 @@
 package com.vegeta.goku.ghostify
 
-import com.johnsnowlabs.nlp.annotator._
+import com.johnsnowlabs.nlp.annotator.{BertForTokenClassification, NerConverter, NerDLModel, WordEmbeddingsModel}
 import com.johnsnowlabs.nlp.base.DocumentAssembler
+import com.vegeta.goku.ghostify.nlp.{SentenceDetector, Tokenizer}
 import org.apache.spark.ml.{Pipeline, PipelineStage}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession

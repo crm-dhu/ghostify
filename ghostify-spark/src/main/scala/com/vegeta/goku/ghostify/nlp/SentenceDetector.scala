@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 import org.apache.spark.ml.util.{DefaultParamsReadable, Identifiable}
 import org.apache.spark.sql.{DataFrame, Dataset}

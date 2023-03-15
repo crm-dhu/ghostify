@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 import scala.util.matching.Regex
 
@@ -6,7 +6,7 @@ import com.johnsnowlabs.nlp.AnnotatorType.DOCUMENT
 import org.apache.spark.ml.param.{BooleanParam, Param, StringArrayParam}
 import org.apache.spark.ml.util.{DefaultParamsReadable, Identifiable}
 
-import com.salesforce.mce.ghostify.nlp.AnnotatorType.TOKEN
+import com.vegeta.goku.ghostify.nlp.AnnotatorType.TOKEN
 
 class TokenizerModel(override val uid: String)
     extends AnnotatorModel[TokenizerModel] with HasSimpleAnnotate[TokenizerModel] {

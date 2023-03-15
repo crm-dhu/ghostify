@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 import org.apache.spark.ml.{Model, PipelineModel}
 import org.apache.spark.sql.functions._

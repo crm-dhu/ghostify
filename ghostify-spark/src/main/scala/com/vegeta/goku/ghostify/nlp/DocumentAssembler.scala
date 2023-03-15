@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 import scala.util.Try
 
@@ -10,7 +10,7 @@ import org.apache.spark.sql.functions.udf
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{DataFrame, Dataset}
 
-import com.salesforce.mce.ghostify.nlp.AnnotatorType.DOCUMENT
+import com.vegeta.goku.ghostify.nlp.AnnotatorType.DOCUMENT
 
 class DocumentAssembler(override val uid: String)
     extends Transformer with DefaultParamsWritable with HasOutputAnnotatorType

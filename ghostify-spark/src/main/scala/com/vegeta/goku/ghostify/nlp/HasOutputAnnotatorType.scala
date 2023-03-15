@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 trait HasOutputAnnotatorType {
   type AnnotatorType = String

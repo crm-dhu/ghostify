@@ -1,4 +1,4 @@
-package com.salesforce.mce.ghostify.nlp
+package com.vegeta.goku.ghostify.nlp
 
 case class TokenizedSentence(indexedTokens: Array[IndexedToken], sentenceIndex: Int) {
   lazy val tokens: Array[String] = indexedTokens.map(t => t.token)
