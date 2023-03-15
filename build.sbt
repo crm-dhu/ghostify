@@ -5,17 +5,16 @@ lazy val supportedScalaVersions = List(scala212, scala213)
 val djlVersion = "0.20.0"
 val sparkVersion = "3.0.0"
 
-val djlTensorflowEngine = "ai.djl.tensorflow" % "tensorflow-engine" % djlVersion
-val djlTensorflowModelZoo = "ai.djl.tensorflow" % "tensorflow-model-zoo" % djlVersion
-val protobuf = "com.google.protobuf" % "protobuf-java" % "3.20.1"
-
 val scalaTestArtifact    = "org.scalatest"          %% "scalatest"                % "3.2.+" % Test
+
+val djlTfEngine          = "ai.djl.tensorflow"      % "tensorflow-engine"         % djlVersion
+val djlTfModelZoo        = "ai.djl.tensorflow"      % "tensorflow-model-zoo"      % djlVersion
+val protobuf             = "com.google.protobuf"    % "protobuf-java"             % "3.20.1"
+
 val sparkCoreArtifact    = "org.apache.spark"       %% "spark-core"               % sparkVersion % Provided
 val sparkSqlArtifact     = "org.apache.spark"       %% "spark-sql"                % sparkVersion % Provided
 val sparkMlArtifact      = "org.apache.spark"       %% "spark-mllib"              % sparkVersion % Provided
-val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp"                % "4.3.1"
-// tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
-val collectionCompact = "org.scala-lang.modules"    %% "scala-collection-compat"  % "2.5.0"
+val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp-silicon"                % "4.3.1"
 
 lazy val commonSettings = Seq(
   scalaVersion := scala212,
@@ -49,34 +48,28 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       // Add your dependencies here
     )
-  ).
-  aggregate(djl, spark)
+  )//.
+//  aggregate(djl, spark)
 
 lazy val djl = (project in file("ghostify-djl")).
-  enablePlugins(TestManagerPlugin).
   settings(commonSettings: _*).
   settings(
     name := "ghostify-djl",
     libraryDependencies ++= Seq(
-      collectionCompact,
-      djlTensorflowEngine,
-      djlTensorflowModelZoo,
+      djlTfEngine,
+      djlTfModelZoo,
       protobuf,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value
     )
   )
 
 lazy val spark = (project in file("ghostify-spark")).
-  enablePlugins(TestManagerPlugin).
   settings(commonSettings: _*).
   settings(
     name := "ghostify-spark",
     libraryDependencies ++= Seq(
-      collectionCompact,
       sparkCoreArtifact,
       sparkSqlArtifact,
       sparkMlArtifact,
       scalaNlpArtifact,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value
     )
   )
