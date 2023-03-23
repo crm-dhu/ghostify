@@ -2,19 +2,14 @@ lazy val scala212 = "2.12.12"
 lazy val scala213 = "2.13.6"
 lazy val supportedScalaVersions = List(scala212, scala213)
 
-val djlVersion = "0.20.0"
 val sparkVersion = "3.0.0"
 
 val scalaTestArtifact    = "org.scalatest"          %% "scalatest"                % "3.2.+" % Test
 
-val djlTfEngine          = "ai.djl.tensorflow"      % "tensorflow-engine"         % djlVersion
-val djlTfModelZoo        = "ai.djl.tensorflow"      % "tensorflow-model-zoo"      % djlVersion
-val protobuf             = "com.google.protobuf"    % "protobuf-java"             % "3.20.1"
-
 val sparkCoreArtifact    = "org.apache.spark"       %% "spark-core"               % sparkVersion % Provided
 val sparkSqlArtifact     = "org.apache.spark"       %% "spark-sql"                % sparkVersion % Provided
 val sparkMlArtifact      = "org.apache.spark"       %% "spark-mllib"              % sparkVersion % Provided
-val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp-silicon"                % "4.3.1"
+val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp-silicon"        % "4.3.2"
 
 lazy val commonSettings = Seq(
   scalaVersion := scala212,
@@ -51,14 +46,12 @@ lazy val root = (project in file(".")).
   )//.
 //  aggregate(djl, spark)
 
-lazy val djl = (project in file("ghostify-djl")).
+lazy val core = (project in file("ghostify-core")).
   settings(commonSettings: _*).
   settings(
-    name := "ghostify-djl",
+    name := "ghostify-core",
     libraryDependencies ++= Seq(
-      djlTfEngine,
-      djlTfModelZoo,
-      protobuf,
+
     )
   )
 
@@ -70,6 +63,6 @@ lazy val spark = (project in file("ghostify-spark")).
       sparkCoreArtifact,
       sparkSqlArtifact,
       sparkMlArtifact,
-      scalaNlpArtifact,
+      scalaNlpArtifact
     )
   )

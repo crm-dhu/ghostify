@@ -18,3 +18,8 @@ utils/models/
 .settings/
 .cache
 classes/
+
+.bsp/
+.metals/
+.vscode/
+
