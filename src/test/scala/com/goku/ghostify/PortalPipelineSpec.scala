@@ -1,7 +1,7 @@
 package com.goku.ghostify
 
 import com.goku.ghostify.data.{FeatureMap, NamedFeature}
-import com.goku.ghostify.nlp.{DocumentAssembler, SentenceDetector, Tokenizer}
+import com.goku.ghostify.nlp.{DocumentAssembler, SentenceDetector, TokenizerModel, WordEmbeddingsModel}
 import com.johnsnowlabs.nlp.Annotation
 import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, TOKEN}
 import org.scalatest.wordspec.AnyWordSpec
@@ -20,7 +20,11 @@ class PortalPipelineSpec extends AnyWordSpec {
     NamedFeature[Array[Annotation]]("sentence")
   )
   val tokenizer =
-    Tokenizer(NamedFeature[Array[Annotation]]("sentence"), NamedFeature[Array[Annotation]]("token"))
+    TokenizerModel(NamedFeature[Array[Annotation]]("sentence"), NamedFeature[Array[Annotation]]("token"))
+
+  val embedding = WordEmbeddingsModel(
+    NamedFeature[Array[Annotation]]("document"),
+    NamedFeature[Array[Annotation]]("sentence"))
   val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer))
   val transformed = pipeline.transform(featureMap)
 

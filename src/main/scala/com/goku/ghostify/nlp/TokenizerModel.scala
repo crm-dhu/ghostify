@@ -3,7 +3,13 @@ package com.goku.ghostify.nlp
 import com.goku.ghostify.PortalUnaryTransformer
 import com.goku.ghostify.data.NamedFeature
 import com.goku.ghostify.util.ObjectMarshaller
-import com.johnsnowlabs.nlp.annotators.common.{IndexedToken, Sentence, SentenceSplit, TokenizedSentence}
+import com.johnsnowlabs.nlp.annotators.common.{
+  IndexedToken,
+  Sentence,
+  SentenceSplit,
+  TokenizedSentence,
+  TokenizedWithSentence
+}
 import com.johnsnowlabs.nlp.{Annotation, AnnotatorType}
 import io.circe.Json
 import io.circe.generic.auto._
@@ -12,7 +18,7 @@ import io.circe.syntax._
 import java.util.regex.Pattern
 import scala.util.matching.Regex
 
-case class Tokenizer(
+case class TokenizerModel(
   inputCol: NamedFeature[Array[Annotation]],
   outputCol: NamedFeature[Array[Annotation]],
   targetPattern: String = "\\S+",
@@ -23,18 +29,7 @@ case class Tokenizer(
   override def transformFeature(annotations: Array[Annotation]): Array[Annotation] = {
     val sentences = SentenceSplit.unpack(annotations)
     val tokenized = tag(sentences)
-
-    tokenized.flatMap { sentence =>
-      sentence.indexedTokens.map { token =>
-        Annotation(
-          AnnotatorType.TOKEN,
-          token.begin,
-          token.end,
-          token.token,
-          Map("sentence" -> sentence.sentenceIndex.toString)
-        )
-      }
-    }.toArray
+    TokenizedWithSentence.pack(tokenized).toArray
   }
 
   private val ProtectChar = "ↈ"
@@ -101,7 +96,7 @@ case class Tokenizer(
   def marshal = this.asJson
 }
 
-object Tokenizer extends ObjectMarshaller[Tokenizer] {
+object TokenizerModel extends ObjectMarshaller[TokenizerModel] {
 
-  def unmarshal(jsonObj: Json): Either[Throwable, Tokenizer] = jsonObj.as[Tokenizer]
+  def unmarshal(jsonObj: Json): Either[Throwable, TokenizerModel] = jsonObj.as[TokenizerModel]
 }
