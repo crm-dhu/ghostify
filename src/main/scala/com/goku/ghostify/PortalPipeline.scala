@@ -1,11 +1,11 @@
 package com.goku.ghostify
 
-import scala.collection.mutable.Builder
-
 import com.goku.ghostify.data.FeatureMap
 import com.goku.ghostify.util.ObjectMarshaller
-import io.circe.syntax._
 import io.circe.parser._
+import io.circe.syntax._
+
+import scala.collection.mutable.Builder
 
 case class PortalPipeline(stages: Seq[PortalTransformer]) {
 
