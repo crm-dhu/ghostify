@@ -56,7 +56,6 @@ assembly / assemblyMergeStrategy := {
 }
 
 lazy val root = (project in file(".")).
-  enablePlugins(TestManagerPlugin).
   settings(commonSettings: _*).
   settings(
     name := "ghostify",
