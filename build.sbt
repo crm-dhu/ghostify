@@ -3,19 +3,38 @@ lazy val scala213 = "2.13.6"
 lazy val supportedScalaVersions = List(scala212, scala213)
 
 val sparkVersion = "3.0.0"
+val tensorflowVersion = "0.4.4"
+val rocksdbjniVersion = "6.29.5"
+val awsSdkVersion = "1.11.828"
+val liblevenshteinVersion = "3.0.0"
+val greexVersion = "1.0"
+val circeVersion = "0.14.5"
 
-val scalaTestArtifact    = "org.scalatest"          %% "scalatest"                % "3.2.+" % Test
+val scalaTestArtifact    = "org.scalatest"                  %% "scalatest"                % "3.2.+" % Test
+val sparkCoreArtifact    = "org.apache.spark"               %% "spark-core"               % sparkVersion % Provided
+val sparkSqlArtifact     = "org.apache.spark"               %% "spark-sql"                % sparkVersion % Provided
+val sparkMlArtifact      = "org.apache.spark"               %% "spark-mllib"              % sparkVersion % Provided
 
-val sparkCoreArtifact    = "org.apache.spark"       %% "spark-core"               % sparkVersion % Provided
-val sparkSqlArtifact     = "org.apache.spark"       %% "spark-sql"                % sparkVersion % Provided
-val sparkMlArtifact      = "org.apache.spark"       %% "spark-mllib"              % sparkVersion % Provided
-val scalaNlpArtifact     = "com.johnsnowlabs.nlp"   %% "spark-nlp-silicon"        % "4.3.2"
+val scalaNlpArtifact     = "com.johnsnowlabs.nlp"           %% "spark-nlp"                % "4.3.1"
+
+val tensorflowCPU        = "com.johnsnowlabs.nlp"           %% "tensorflow-cpu"           % tensorflowVersion
+val rocksdbjni           = "org.rocksdb"                    % "rocksdbjni"                % rocksdbjniVersion
+val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
+val awsSdkPi             = "com.amazonaws"                  % "aws-java-sdk-pi"           % awsSdkVersion
+val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
+val greex                = "com.navigamez"                  % "greex"                     % greexVersion
+
+val circeDeps = Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)
 
 lazy val commonSettings = Seq(
   scalaVersion := scala212,
   crossScalaVersions := supportedScalaVersions,
   libraryDependencies += scalaTestArtifact,
-  organization := "com.vegeta.goku",
+  organization := "com.salesforce.mce",
   assembly / test := {}  // skip test during assembly
 )
 
@@ -37,32 +56,24 @@ assembly / assemblyMergeStrategy := {
 }
 
 lazy val root = (project in file(".")).
+  enablePlugins(TestManagerPlugin).
   settings(commonSettings: _*).
   settings(
     name := "ghostify",
     libraryDependencies ++= Seq(
-      // Add your dependencies here
-    )
-  )//.
-//  aggregate(djl, spark)
-
-lazy val core = (project in file("ghostify-core")).
-  settings(commonSettings: _*).
-  settings(
-    name := "ghostify-core",
-    libraryDependencies ++= Seq(
-
-    )
-  )
-
-lazy val spark = (project in file("ghostify-spark")).
-  settings(commonSettings: _*).
-  settings(
-    name := "ghostify-spark",
-    libraryDependencies ++= Seq(
       sparkCoreArtifact,
       sparkSqlArtifact,
       sparkMlArtifact,
-      scalaNlpArtifact
-    )
+      rocksdbjni,
+      awsSdkS3,
+      awsSdkPi,
+      liblevenshtein
+        exclude("com.google.guava", "guava")
+        exclude("org.apache.commons", "commons-lang3")
+        exclude("com.google.code.findbugs", "annotations")
+        exclude("org.slf4j", "slf4j-api"),
+      greex,
+      tensorflowCPU
+    ) ++ circeDeps
+
   )
