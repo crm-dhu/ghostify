@@ -8,7 +8,7 @@ import com.johnsnowlabs.ml.util.LoadExternalModel.{loadTextAsset, modelSanityChe
 import com.johnsnowlabs.ml.util.ModelEngine
 import com.johnsnowlabs.nlp.Annotation
 import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, TOKEN}
-import com.johnsnowlabs.nlp.annotators.common.{IndexedToken, Sentence, TokenizedSentence}
+import com.johnsnowlabs.nlp.annotators.common.{IndexedToken, Sentence, TokenizedSentence, TokenizedWithSentence}
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -63,28 +63,7 @@ case class BertForTokenClassification(
     annotations: (Array[Annotation], Array[Annotation])
   ): Array[Annotation] = {
     val (docs, tokens) = annotations
-    require(tokens.forall(_.annotatorType == TOKEN))
-    require(docs.forall(_.annotatorType == DOCUMENT))
-    val sentences = docs.map { annotation =>
-      val index = annotation.metadata.getOrElse("sentence", "0").toInt
-      Sentence(
-        annotation.result,
-        annotation.begin,
-        annotation.end,
-        index,
-        Option(annotation.metadata)
-      )
-    }
-    val tokenizedSentences = sentences
-      .map(sentence => {
-        val sentenceTokens = tokens
-          .filter(token => token.begin >= sentence.start & token.end <= sentence.end)
-          .map(token => IndexedToken(token.result, token.begin, token.end))
-        sentenceTokens
-      })
-      .zipWithIndex
-      .map { case (indexedTokens, index) => TokenizedSentence(indexedTokens, index) }
-      .filter(_.indexedTokens.nonEmpty)
+    val tokenizedSentences = TokenizedWithSentence.unpack(docs ++ tokens)
     val batchedTokenizedSentences = tokenizedSentences.grouped(batchSize)
     if (batchedTokenizedSentences.nonEmpty) {
       batchedTokenizedSentences

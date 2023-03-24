@@ -1,13 +1,11 @@
 package com.goku.ghostify
 
 import com.goku.ghostify.data.{FeatureMap, NamedFeature}
-import com.goku.ghostify.nlp.{BertForTokenClassification, DocumentAssembler, SentenceDetector, TokenizerModel}
+import com.goku.ghostify.nlp.{BertForTokenClassification, DocumentAssembler, NerConverter, SentenceDetector, TokenizerModel}
 import com.goku.ghostify.util.Params
 import com.johnsnowlabs.nlp.Annotation
-import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, NAMED_ENTITY, TOKEN}
+import com.johnsnowlabs.nlp.AnnotatorType.{CHUNK, DOCUMENT, NAMED_ENTITY, TOKEN}
 import org.scalatest.wordspec.AnyWordSpec
-
-import scala.collection.immutable.Map
 
 class PortalPipelineSpec extends AnyWordSpec {
 
@@ -34,7 +32,12 @@ class PortalPipelineSpec extends AnyWordSpec {
     Params.ModelPath
   )
 
-  val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer, ner))
+  val nerConverter = NerConverter(
+    (NamedFeature[Array[Annotation]]("document"), NamedFeature[Array[Annotation]]("token"), NamedFeature[Array[Annotation]]("ner")),
+    NamedFeature[Array[Annotation]]("predictions")
+  )
+
+  val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer, ner, nerConverter))
   val transformed = pipeline.transform(featureMap)
 
   "document assembler" should {
@@ -118,8 +121,20 @@ class PortalPipelineSpec extends AnyWordSpec {
         assert(p.end == e.end)
         assert(p.result == e.result)
       }
+    }
+  }
 
-
+  "NER Converter" should {
+    "return correct answer" in {
+      val expected = Array(Annotation(CHUNK, 11, 19, "Alex Wang", Map.empty[String, String]))
+      val preds = transformed.get(NamedFeature[Array[Annotation]]("predictions")).get
+      assert(preds.length == expected.length)
+      preds.zip(expected).foreach { case (p, e) =>
+        assert(p.annotatorType == e.annotatorType)
+        assert(p.begin == e.begin)
+        assert(p.end == e.end)
+        assert(p.result == e.result)
+      }
     }
   }
 

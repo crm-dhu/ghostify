@@ -45,10 +45,32 @@ trait PortalBinaryTransformer[I1, I2, O] extends PortalTransformer {
   def transformFeature(inputs: (I1, I2)): O
 
   override final def transform(inputFeatureMap: FeatureMap): FeatureMap = {
+    val (col1, col2) = inputCols
     val inputs = for {
-      i1 <- inputFeatureMap.get(inputCols._1)
-      i2 <- inputFeatureMap.get(inputCols._2)
+      i1 <- inputFeatureMap.get(col1)
+      i2 <- inputFeatureMap.get(col2)
     } yield (i1, i2)
+    inputs.fold(inputFeatureMap) { inputValues =>
+      inputFeatureMap.put(outputCol, transformFeature(inputValues))
+    }
+  }
+}
+
+trait PortalTernaryTransformer[I1, I2, I3, O] extends PortalTransformer {
+
+  def inputCols: (NamedFeature[I1], NamedFeature[I2], NamedFeature[I3])
+
+  def outputCol: NamedFeature[O]
+
+  def transformFeature(inputs: (I1, I2, I3)): O
+
+  override final def transform(inputFeatureMap: FeatureMap): FeatureMap = {
+    val (col1, col2, col3) = inputCols
+    val inputs = for {
+      i1 <- inputFeatureMap.get(col1)
+      i2 <- inputFeatureMap.get(col2)
+      i3 <- inputFeatureMap.get(col3)
+    } yield (i1, i2, i3)
     inputs.fold(inputFeatureMap) { inputValues =>
       inputFeatureMap.put(outputCol, transformFeature(inputValues))
     }
