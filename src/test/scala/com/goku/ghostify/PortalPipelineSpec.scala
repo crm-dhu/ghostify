@@ -1,10 +1,13 @@
 package com.goku.ghostify
 
 import com.goku.ghostify.data.{FeatureMap, NamedFeature}
-import com.goku.ghostify.nlp.{DocumentAssembler, SentenceDetector, TokenizerModel, WordEmbeddingsModel}
+import com.goku.ghostify.nlp.{BertForTokenClassification, DocumentAssembler, SentenceDetector, TokenizerModel}
+import com.goku.ghostify.util.Params
 import com.johnsnowlabs.nlp.Annotation
-import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, TOKEN}
+import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, NAMED_ENTITY, TOKEN}
 import org.scalatest.wordspec.AnyWordSpec
+
+import scala.collection.immutable.Map
 
 class PortalPipelineSpec extends AnyWordSpec {
 
@@ -20,12 +23,18 @@ class PortalPipelineSpec extends AnyWordSpec {
     NamedFeature[Array[Annotation]]("sentence")
   )
   val tokenizer =
-    TokenizerModel(NamedFeature[Array[Annotation]]("sentence"), NamedFeature[Array[Annotation]]("token"))
+    TokenizerModel(
+      NamedFeature[Array[Annotation]]("sentence"),
+      NamedFeature[Array[Annotation]]("token")
+    )
 
-  val embedding = WordEmbeddingsModel(
-    NamedFeature[Array[Annotation]]("document"),
-    NamedFeature[Array[Annotation]]("sentence"))
-  val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer))
+  val ner = BertForTokenClassification(
+    (NamedFeature[Array[Annotation]]("document"), NamedFeature[Array[Annotation]]("token")),
+    NamedFeature[Array[Annotation]]("ner"),
+    Params.ModelPath
+  )
+
+  val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer, ner))
   val transformed = pipeline.transform(featureMap)
 
   "document assembler" should {
@@ -47,7 +56,12 @@ class PortalPipelineSpec extends AnyWordSpec {
       assert(
         transformed.get(NamedFeature[Array[Annotation]]("sentence")).get === Array(
           Annotation(DOCUMENT, 0, 20, "My name is Alex Wang.", Map("sentence" -> "0")),
-          Annotation(DOCUMENT, 22, 59, "Here is my email: alex.wang@gmail.com.", Map("sentence" -> "1")
+          Annotation(
+            DOCUMENT,
+            22,
+            59,
+            "Here is my email: alex.wang@gmail.com.",
+            Map("sentence" -> "1")
           )
         )
       )
@@ -57,7 +71,6 @@ class PortalPipelineSpec extends AnyWordSpec {
   "tokenizer" should {
 
     "return correct answer" in {
-      transformed.get(NamedFeature[Array[Annotation]]("token")).get.foreach(println)
 
       assert(
         transformed.get(NamedFeature[Array[Annotation]]("token")).get === Array(
@@ -76,6 +89,37 @@ class PortalPipelineSpec extends AnyWordSpec {
           Annotation(TOKEN, 59, 59, ".", Map("sentence" -> "1"))
         )
       )
+    }
+  }
+
+  "NER" should {
+    "return correct answer" in {
+      val expected = Array(
+        Annotation(NAMED_ENTITY, 0, 1, "O", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 3, 6, "O", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 8, 9, "O", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 11, 14, "B-PER", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 16, 19, "I-PER", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 20, 20, "O", Map("sentence" -> "0")),
+        Annotation(NAMED_ENTITY, 22, 25, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 27, 28, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 30, 31, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 33, 37, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 38, 38, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 40, 58, "O", Map("sentence" -> "1")),
+        Annotation(NAMED_ENTITY, 59, 59, "O", Map("sentence" -> "1"))
+      )
+
+      val preds = transformed.get(NamedFeature[Array[Annotation]]("ner")).get
+      assert(preds.length == expected.length)
+      preds.zip(expected).foreach {case (p, e) =>
+        assert(p.annotatorType == e.annotatorType)
+        assert(p.begin == e.begin)
+        assert(p.end == e.end)
+        assert(p.result == e.result)
+      }
+
+
     }
   }
 
