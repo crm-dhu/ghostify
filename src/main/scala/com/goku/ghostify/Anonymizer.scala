@@ -45,8 +45,8 @@ object Anonymizer {
   }
 
   private def pipelineStages(
-                              useDefault: Boolean
-                            )(implicit ss: SparkSession): Array[_ <: PipelineStage] = {
+    useDefault: Boolean
+  )(implicit ss: SparkSession): Array[_ <: PipelineStage] = {
 
     val document = new DocumentAssembler()
       .setInputCol(InputCol)
