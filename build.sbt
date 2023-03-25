@@ -8,6 +8,7 @@ val rocksdbjniVersion = "6.29.5"
 val awsSdkVersion = "1.11.828"
 val liblevenshteinVersion = "3.0.0"
 val greexVersion = "1.0"
+val gcpStorageVersion = "2.16.0"
 val circeVersion = "0.14.5"
 
 val scalaTestArtifact    = "org.scalatest"                  %% "scalatest"                % "3.2.+" % Test
@@ -17,12 +18,12 @@ val sparkMlArtifact      = "org.apache.spark"               %% "spark-mllib"    
 
 val scalaNlpArtifact     = "com.johnsnowlabs.nlp"           %% "spark-nlp-silicon"        % "4.3.2"
 
-//val tensorflowCPU        = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"           % tensorflowVersion
-//val rocksdbjni           = "org.rocksdb"                    % "rocksdbjni"                % rocksdbjniVersion
-//val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
-//val awsSdkPi             = "com.amazonaws"                  % "aws-java-sdk-pi"           % awsSdkVersion
-//val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
-//val greex                = "com.navigamez"                  % "greex"                     % greexVersion
+val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"            % tensorflowVersion
+val rocksdbjni           = "org.rocksdb"                    % "rocksdbjni"                % rocksdbjniVersion
+val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
+val awsSdkPi             = "com.amazonaws"                  % "aws-java-sdk-pi"           % awsSdkVersion
+val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
+val greex                = "com.navigamez"                  % "greex"                     % greexVersion
 
 
 val circeDeps = Seq(
@@ -64,17 +65,17 @@ lazy val root = (project in file(".")).
       sparkCoreArtifact,
       sparkSqlArtifact,
       sparkMlArtifact,
-      scalaNlpArtifact
-//       rocksdbjni,
-//       awsSdkS3,
-//       awsSdkPi,
-//       liblevenshtein
-//         exclude("com.google.guava", "guava")
-//         exclude("org.apache.commons", "commons-lang3")
-//         exclude("com.google.code.findbugs", "annotations")
-//         exclude("org.slf4j", "slf4j-api"),
-//       greex,
-//       tensorflowCPU
+//      scalaNlpArtifact
+       rocksdbjni,
+       awsSdkS3,
+       awsSdkPi,
+       liblevenshtein
+         exclude("com.google.guava", "guava")
+         exclude("org.apache.commons", "commons-lang3")
+         exclude("com.google.code.findbugs", "annotations")
+         exclude("org.slf4j", "slf4j-api"),
+      greex,
+      tensorflow
     ) ++ circeDeps
 
   )
