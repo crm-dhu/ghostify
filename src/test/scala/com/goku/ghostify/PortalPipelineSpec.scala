@@ -1,7 +1,13 @@
 package com.goku.ghostify
 
 import com.goku.ghostify.data.{FeatureMap, NamedFeature}
-import com.goku.ghostify.nlp.{BertForTokenClassification, DocumentAssembler, NerConverter, SentenceDetector, TokenizerModel}
+import com.goku.ghostify.nlp.{
+  BertForTokenClassification,
+  DocumentAssembler,
+  NerConverter,
+  SentenceDetector,
+  TokenizerModel
+}
 import com.goku.ghostify.util.Params
 import com.johnsnowlabs.nlp.Annotation
 import com.johnsnowlabs.nlp.AnnotatorType.{CHUNK, DOCUMENT, NAMED_ENTITY, TOKEN}
@@ -10,35 +16,41 @@ import org.scalatest.wordspec.AnyWordSpec
 class PortalPipelineSpec extends AnyWordSpec {
 
   val text = "My name is Alex Wang. Here is my email: alex.wang@gmail.com."
-  val featureMap = FeatureMap().put(NamedFeature("text"), text)
-  val documentAssembler =
+  val featureMap: FeatureMap = FeatureMap().put(NamedFeature("text"), text)
+  val documentAssembler: DocumentAssembler =
     DocumentAssembler(
       NamedFeature[String]("text"),
       NamedFeature[Array[Annotation]]("document")
     )
-  val sentenceDetector = SentenceDetector(
+  val sentenceDetector: SentenceDetector = SentenceDetector(
     NamedFeature[Array[Annotation]]("document"),
     NamedFeature[Array[Annotation]]("sentence")
   )
-  val tokenizer =
+  val tokenizer: TokenizerModel =
     TokenizerModel(
       NamedFeature[Array[Annotation]]("sentence"),
       NamedFeature[Array[Annotation]]("token")
     )
 
-  val ner = BertForTokenClassification(
+  val ner: BertForTokenClassification = BertForTokenClassification(
     (NamedFeature[Array[Annotation]]("document"), NamedFeature[Array[Annotation]]("token")),
     NamedFeature[Array[Annotation]]("ner"),
     Params.ModelPath
   )
 
-  val nerConverter = NerConverter(
-    (NamedFeature[Array[Annotation]]("document"), NamedFeature[Array[Annotation]]("token"), NamedFeature[Array[Annotation]]("ner")),
+  val nerConverter: NerConverter = NerConverter(
+    (
+      NamedFeature[Array[Annotation]]("document"),
+      NamedFeature[Array[Annotation]]("token"),
+      NamedFeature[Array[Annotation]]("ner")
+    ),
     NamedFeature[Array[Annotation]]("predictions")
   )
 
-  val pipeline = PortalPipeline(Seq(documentAssembler, sentenceDetector, tokenizer, ner, nerConverter))
-  val transformed = pipeline.transform(featureMap)
+  val pipeline: PortalPipeline = PortalPipeline(
+    Seq(documentAssembler, sentenceDetector, tokenizer, ner, nerConverter)
+  )
+  val transformed: FeatureMap = pipeline.transform(featureMap)
 
   "document assembler" should {
 
@@ -59,12 +71,7 @@ class PortalPipelineSpec extends AnyWordSpec {
       assert(
         transformed.get(NamedFeature[Array[Annotation]]("sentence")).get === Array(
           Annotation(DOCUMENT, 0, 20, "My name is Alex Wang.", Map("sentence" -> "0")),
-          Annotation(
-            DOCUMENT,
-            22,
-            59,
-            "Here is my email: alex.wang@gmail.com.",
-            Map("sentence" -> "1")
+          Annotation(DOCUMENT, 22, 59, "Here is my email: alex.wang@gmail.com.", Map("sentence" -> "1")
           )
         )
       )
@@ -115,7 +122,7 @@ class PortalPipelineSpec extends AnyWordSpec {
 
       val preds = transformed.get(NamedFeature[Array[Annotation]]("ner")).get
       assert(preds.length == expected.length)
-      preds.zip(expected).foreach {case (p, e) =>
+      preds.zip(expected).foreach { case (p, e) =>
         assert(p.annotatorType == e.annotatorType)
         assert(p.begin == e.begin)
         assert(p.end == e.end)
