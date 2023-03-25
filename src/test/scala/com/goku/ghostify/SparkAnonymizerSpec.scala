@@ -18,21 +18,6 @@ class SparkAnonymizerSpec extends AnyWordSpec {
       )
     )
 
-    "correctly anonymize with default models" in {
-
-      val expected = Seq(
-        "[ORG] has announced the release of a beta version of the popular [ORG] machine learning library",
-        "The [LOC] metro will soon enter the 21st century, ditching single-use paper tickets for rechargeable electronic cards.",
-        "My name is [PER] and my email address is [EMAIL].",
-        "Happy birthday, [PER]"
-      )
-
-      val results = SparkAnonymizer(data, true)
-      val processed = results.collect()
-      expected.zip(processed).foreach { case (e, p) => assert(e === p) }
-
-    }
-
     "correctly anonymize with HF models" in {
 
       val expected = Seq(
@@ -42,7 +27,7 @@ class SparkAnonymizerSpec extends AnyWordSpec {
         "Happy birthday, [PER]!"
       )
 
-      val results = SparkAnonymizer(data, false)
+      val results = SparkAnonymizer(data)
       val processed = results.collect()
       expected.zip(processed).foreach {case (e, p) => assert(e === p)}
 

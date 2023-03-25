@@ -12,11 +12,11 @@ object SparkAnonymizer {
   private final val InputCol = "text"
   private final val OutputCol = "predictions"
 
-  def apply(input: RDD[String], useDefault: Boolean)(implicit ss: SparkSession): RDD[String] = {
+  def apply(input: RDD[String])(implicit ss: SparkSession): RDD[String] = {
 
     import ss.implicits._
 
-    val pipeline = new Pipeline().setStages(pipelineStages(useDefault))
+    val pipeline = new Pipeline().setStages(pipelineStages())
 
     val data = input.toDF(InputCol)
 
@@ -44,9 +44,7 @@ object SparkAnonymizer {
 
   }
 
-  private def pipelineStages(
-    useDefault: Boolean
-  )(implicit ss: SparkSession): Array[_ <: PipelineStage] = {
+  private def pipelineStages()(implicit ss: SparkSession): Array[_ <: PipelineStage] = {
 
     val document = new DocumentAssembler()
       .setInputCol(InputCol)
@@ -60,35 +58,18 @@ object SparkAnonymizer {
       .setInputCols(document.getOutputCol)
       .setOutputCol("token")
 
-    lazy val wordEmbeddings = WordEmbeddingsModel
-      .pretrained()
-      .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol)
-      .setOutputCol("word_embeddings")
-
-    val ner = if (useDefault) {
-      NerDLModel
-        .pretrained("ner_dl", "en")
-        .setInputCols(
-          token.getOutputCol,
-          sentenceDetector.getOutputCol,
-          wordEmbeddings.getOutputCol
-        )
-        .setOutputCol("ner")
-    } else {
-      BertForTokenClassification
+    val ner = BertForTokenClassification
         .loadSavedModel(Params.ModelPath, ss)
         .setInputCols(document.getOutputCol, token.getOutputCol)
         .setOutputCol("ner")
         .setCaseSensitive(true)
         .setMaxSentenceLength(128)
-    }
 
     val nerConverter = new NerConverter()
       .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol, ner.getOutputCol)
       .setOutputCol(OutputCol)
 
-    if (useDefault) Array(document, sentenceDetector, token, wordEmbeddings, ner, nerConverter)
-    else Array(document, sentenceDetector, token, ner, nerConverter)
+    Array(document, sentenceDetector, token, ner, nerConverter)
 
   }
 

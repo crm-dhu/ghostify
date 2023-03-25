@@ -4,7 +4,7 @@ import org.scalatest.wordspec.AnyWordSpec
 
 class NonSparkAnonymizerSpec extends AnyWordSpec {
 
-  "Anonymizer" should {
+  "Non-Spark Anonymizer" should {
 
     val data = Seq(
         "Google has announced the release of a beta version of the popular TensorFlow machine learning library",
@@ -13,7 +13,7 @@ class NonSparkAnonymizerSpec extends AnyWordSpec {
         "Happy birthday, Alex!"
       )
 
-    "correctly anonymize with default models" in {
+    "correctly anonymize with HF models" in {
 
       val expected = Seq(
         "[ORG] has announced the release of a beta version of the popular [MISC] machine learning library",
