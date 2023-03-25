@@ -7,7 +7,7 @@ import org.apache.spark.ml.{Pipeline, PipelineStage}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 
-object Anonymizer {
+object SparkAnonymizer {
 
   private final val InputCol = "text"
   private final val OutputCol = "predictions"

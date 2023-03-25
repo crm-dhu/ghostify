@@ -3,9 +3,9 @@ package com.goku.ghostify
 import org.apache.spark.sql.SparkSession
 import org.scalatest.wordspec.AnyWordSpec
 
-class AnonymizerSpec extends AnyWordSpec {
+class SparkAnonymizerSpec extends AnyWordSpec {
 
-  "Anonymizer" should {
+  "Spark Anonymizer" should {
 
     implicit val sparkSession: SparkSession = TestSparkCluster.session
 
@@ -27,7 +27,7 @@ class AnonymizerSpec extends AnyWordSpec {
         "Happy birthday, [PER]"
       )
 
-      val results = Anonymizer(data, true)
+      val results = SparkAnonymizer(data, true)
       val processed = results.collect()
       expected.zip(processed).foreach { case (e, p) => assert(e === p) }
 
@@ -42,7 +42,7 @@ class AnonymizerSpec extends AnyWordSpec {
         "Happy birthday, [PER]!"
       )
 
-      val results = Anonymizer(data, false)
+      val results = SparkAnonymizer(data, false)
       val processed = results.collect()
       expected.zip(processed).foreach {case (e, p) => assert(e === p)}
 
