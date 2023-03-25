@@ -44,7 +44,7 @@ case class BertForTokenClassification(
         else throw new Exception("Cannot load CLS token from vocabs!")
       val sentenceEndTokenId =
         if (vocabs.contains("[SEP]")) vocabs("[SEP]")
-        else throw new Exception("Cannot load CLS token from vocabs!")
+        else throw new Exception("Cannot load SEP token from vocabs!")
 
       new BertClassification(
         wrapper,
