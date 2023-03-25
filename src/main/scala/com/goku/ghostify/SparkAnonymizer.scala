@@ -60,7 +60,7 @@ object SparkAnonymizer {
 
     val ner = BertForTokenClassification
         .loadSavedModel(Params.ModelPath, ss)
-        .setInputCols(document.getOutputCol, token.getOutputCol)
+        .setInputCols(sentenceDetector.getOutputCol, token.getOutputCol)
         .setOutputCol("ner")
         .setCaseSensitive(true)
         .setMaxSentenceLength(128)

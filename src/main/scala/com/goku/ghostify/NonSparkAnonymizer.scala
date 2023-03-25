@@ -27,7 +27,7 @@ object NonSparkAnonymizer {
       )
 
     val ner: BertForTokenClassification = BertForTokenClassification(
-      (NamedFeature[Array[Annotation]]("document"), NamedFeature[Array[Annotation]]("token")),
+      (NamedFeature[Array[Annotation]]("sentence"), NamedFeature[Array[Annotation]]("token")),
       NamedFeature[Array[Annotation]]("ner"),
       Params.ModelPath
     )
