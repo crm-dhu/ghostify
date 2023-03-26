@@ -9,6 +9,7 @@ import com.johnsnowlabs.nlp.{Annotation, AnnotatorType}
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
+
 case class NerConverter(
   inputCols: (
     NamedFeature[Array[Annotation]],

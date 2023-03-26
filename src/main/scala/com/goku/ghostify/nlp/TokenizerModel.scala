@@ -3,14 +3,8 @@ package com.goku.ghostify.nlp
 import com.goku.ghostify.PortalUnaryTransformer
 import com.goku.ghostify.data.NamedFeature
 import com.goku.ghostify.util.ObjectMarshaller
-import com.johnsnowlabs.nlp.annotators.common.{
-  IndexedToken,
-  Sentence,
-  SentenceSplit,
-  TokenizedSentence,
-  TokenizedWithSentence
-}
-import com.johnsnowlabs.nlp.{Annotation, AnnotatorType}
+import com.johnsnowlabs.nlp.Annotation
+import com.johnsnowlabs.nlp.annotators.common._
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._

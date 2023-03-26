@@ -7,8 +7,7 @@ import com.johnsnowlabs.ml.tensorflow.TensorflowWrapper
 import com.johnsnowlabs.ml.util.LoadExternalModel.{loadTextAsset, modelSanityCheck, notSupportedEngineError}
 import com.johnsnowlabs.ml.util.ModelEngine
 import com.johnsnowlabs.nlp.Annotation
-import com.johnsnowlabs.nlp.AnnotatorType.{DOCUMENT, TOKEN}
-import com.johnsnowlabs.nlp.annotators.common.{IndexedToken, Sentence, TokenizedSentence, TokenizedWithSentence}
+import com.johnsnowlabs.nlp.annotators.common.TokenizedWithSentence
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._

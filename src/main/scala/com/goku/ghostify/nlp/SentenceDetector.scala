@@ -9,6 +9,7 @@ import com.johnsnowlabs.nlp.annotators.sbd.pragmatic.DefaultPragmaticMethod
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
+
 case class SentenceDetector(
   inputCol: NamedFeature[Array[Annotation]],
   outputCol: NamedFeature[Array[Annotation]]
