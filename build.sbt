@@ -25,22 +25,7 @@ val awsSdkPi             = "com.amazonaws"                  % "aws-java-sdk-pi" 
 val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
 val greex                = "com.navigamez"                  % "greex"                     % greexVersion
 
-enablePlugins(UmlClassDiagramPlugin)
-classDiagramSettings :=
-  classDiagramSettings
-    .value
-    .copy(
-      enabledConnectionTypes =
-        Set(
-          com.leobenkel.umlclassdiagram.internal.ConnectionType.Inherit,
-          com.leobenkel.umlclassdiagram.internal.ConnectionType.Produce,
-          com.leobenkel.umlclassdiagram.internal.ConnectionType.Consume,
-          com.leobenkel.umlclassdiagram.internal.ConnectionType.Throw,
-          com.leobenkel.umlclassdiagram.internal.ConnectionType.Enclosing,
-        ),
-    )
-classDiagramSettings := classDiagramSettings.value.copy(openFolder = true, openSvg = true)
-
+enablePlugins(ClassDiagramPlugin)
 
 val circeDeps = Seq(
   "io.circe" %% "circe-core",
