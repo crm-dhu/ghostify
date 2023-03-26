@@ -21,7 +21,6 @@ val scalaNlpArtifact     = "com.johnsnowlabs.nlp"           %% "spark-nlp-silico
 val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"            % tensorflowVersion
 val rocksdbjni           = "org.rocksdb"                    % "rocksdbjni"                % rocksdbjniVersion
 val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
-val awsSdkPi             = "com.amazonaws"                  % "aws-java-sdk-pi"           % awsSdkVersion
 val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
 val greex                = "com.navigamez"                  % "greex"                     % greexVersion
 
@@ -69,7 +68,6 @@ lazy val root = (project in file(".")).
 //      scalaNlpArtifact
        rocksdbjni,
        awsSdkS3,
-       awsSdkPi,
        liblevenshtein
          exclude("com.google.guava", "guava")
          exclude("org.apache.commons", "commons-lang3")
