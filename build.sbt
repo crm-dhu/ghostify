@@ -18,13 +18,12 @@ val sparkMlArtifact      = "org.apache.spark"               %% "spark-mllib"    
 
 val scalaNlpArtifact     = "com.johnsnowlabs.nlp"           %% "spark-nlp-silicon"        % "4.3.2"
 
-val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"            % tensorflowVersion
-val rocksdbjni           = "org.rocksdb"                    % "rocksdbjni"                % rocksdbjniVersion
+val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-cpu"           % tensorflowVersion
+//val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"            % tensorflowVersion
 val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
 val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
 val greex                = "com.navigamez"                  % "greex"                     % greexVersion
 
-enablePlugins(ClassDiagramPlugin)
 
 val circeDeps = Seq(
   "io.circe" %% "circe-core",
@@ -36,7 +35,7 @@ lazy val commonSettings = Seq(
   scalaVersion := scala212,
   crossScalaVersions := supportedScalaVersions,
   libraryDependencies += scalaTestArtifact,
-  organization := "com.salesforce.mce",
+  organization := "com.goku",
   assembly / test := {}  // skip test during assembly
 )
 
@@ -65,15 +64,7 @@ lazy val root = (project in file(".")).
       sparkCoreArtifact,
       sparkSqlArtifact,
       sparkMlArtifact,
-//      scalaNlpArtifact
-       rocksdbjni,
-       awsSdkS3,
-       liblevenshtein
-         exclude("com.google.guava", "guava")
-         exclude("org.apache.commons", "commons-lang3")
-         exclude("com.google.code.findbugs", "annotations")
-         exclude("org.slf4j", "slf4j-api"),
-      greex,
+      awsSdkS3,
       tensorflow
     ) ++ circeDeps
 

@@ -1,18 +1,14 @@
 package com.goku.ghostify.nlp
 
-import com.johnsnowlabs.nlp.annotators.common.{IndexedToken, Sentence}
-
 import java.text.Normalizer
+
 import scala.collection.mutable
 
-/**
- * @param caseSensitive
- *   whether or not content should be case sensitive or not
- * @param hasBeginEnd
- *   whether or not the input sentence has already been tokenized before like in BERT and
- *   DistilBERT
- */
-class BasicTokenizer(caseSensitive: Boolean = false, hasBeginEnd: Boolean = true) {
+import com.goku.ghostify.common.{IndexedToken, Sentence}
+
+// The below is the same implementation as `com.johnsnowlabs.nlp.annotators.tokenizer.wordpiece.BasicTokenizer`
+class BasicTokenizer(caseSensitive: Boolean = false, hasBeginEnd: Boolean = true)
+    extends Serializable {
 
   def isWhitespace(char: Char): Boolean = {
     char == ' ' || char == '\t' || char == '\n' || char == '\r' || Character.isWhitespace(char)
@@ -46,8 +42,7 @@ class BasicTokenizer(caseSensitive: Boolean = false, hasBeginEnd: Boolean = true
       }
       charCategoryString.contains("PUNCTUATION")
     } catch {
-      case _: Exception =>
-        false
+      case _: Exception => false
     }
 
   }
@@ -86,11 +81,6 @@ class BasicTokenizer(caseSensitive: Boolean = false, hasBeginEnd: Boolean = true
       result.toLowerCase
   }
 
-  /**
-   * @param sentence
-   *   input Sentence which can be a full sentence or just a token in type of Sentence
-   * @return
-   */
   def tokenize(sentence: Sentence): Array[IndexedToken] = {
 
     val tokens = mutable.ArrayBuffer[IndexedToken]()
