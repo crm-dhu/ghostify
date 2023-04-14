@@ -21,9 +21,8 @@ val scalaNlpArtifact     = "com.johnsnowlabs.nlp"           %% "spark-nlp-silico
 val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-cpu"           % tensorflowVersion
 //val tensorflow           = "com.johnsnowlabs.nlp"           %% "tensorflow-m1"            % tensorflowVersion
 val awsSdkS3             = "com.amazonaws"                  % "aws-java-sdk-s3"           % awsSdkVersion
-val liblevenshtein       = "com.github.universal-automata"  % "liblevenshtein"            % liblevenshteinVersion
-val greex                = "com.navigamez"                  % "greex"                     % greexVersion
 
+enablePlugins(ClassDiagramPlugin)
 
 val circeDeps = Seq(
   "io.circe" %% "circe-core",
